@@ -1,12 +1,15 @@
 import os
 from pathlib import Path
 from datetime import timedelta
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'your-secret-key'
-DEBUG = True
-ALLOWED_HOSTS = []
+load_dotenv()
+
+SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-insecure-secret-key')
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 # Installed apps
 INSTALLED_APPS = [
@@ -17,12 +20,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'corsheaders',
     'rest_framework_simplejwt',
+    'django_rest_passwordreset',
     'accounts',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -55,18 +61,19 @@ WSGI_APPLICATION = 'jelani_backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'insurance_db',
-        'USER': 'root',
-        'PASSWORD': 'yourpassword',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
 
 # Custom User Model
 AUTH_USER_MODEL = 'accounts.User'
 AUTHENTICATION_BACKENDS = [
-    'accounts.backends.EmailOrUsernameModelBackend',
+    'accounts.backends.EmailOrUsernameModelBackend', # Custom backend for email/username login
+    'django.contrib.auth.backends.ModelBackend',     # Default backend for Django admin
 ]
 
 # Password validation
@@ -86,7 +93,42 @@ REST_FRAMEWORK = {
 
 # JWT Settings
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+# Use a long-lived access token in development for easier testing
+if DEBUG:
+    SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'] = timedelta(days=1)
+else:
+    # Keep it short in production for security
+    SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'] = timedelta(minutes=15)
+
+
+# Email settings for development (prints emails to console)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'noreply@jelani-insurance.com'
+
+# For production, use a real email service like SendGrid, Mailgun, or AWS SES.
+
+# CORS Settings
+# In development, you can allow your frontend's local server.
+# For production, replace these with your actual frontend domain(s).
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # React default
+    "http://localhost:5173",  # Vite default
+    "http://localhost:8080",  # Vue default
+    "http://localhost:4200",  # Angular default
+    "http://127.0.0.1:3000",
+]
+
+# Allow credentials (cookies, authorization headers) to be included in CORS requests
+CORS_ALLOW_CREDENTIALS = True
+
+# Static files (CSS, JavaScript, Images) for Django Admin
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Media files (User-uploaded content like claim documents)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

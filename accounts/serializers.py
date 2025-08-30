@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from .models import Claim, Payment
 
 User = get_user_model()
 
@@ -35,3 +36,15 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['username'] = self.user.username  # ensure dashboard reads username
         data['email'] = self.user.email
         return data
+
+class ClaimSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Claim
+        fields = '__all__'
+        read_only_fields = ('user', 'status', 'created_at')
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = '__all__'
+        read_only_fields = ('user', 'status', 'created_at', 'reference')
