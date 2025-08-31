@@ -105,11 +105,20 @@ else:
     SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'] = timedelta(minutes=15)
 
 
-# Email settings for development (prints emails to console)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'noreply@jelani-insurance.com'
+# Email Settings
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@jelani-insurance.com')
 
-# For production, use a real email service like SendGrid, Mailgun, or AWS SES.
+if DEBUG:
+    # In development, print emails to the console.
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    # In production, use a real SMTP server.
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = os.getenv('EMAIL_HOST')
+    EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+    EMAIL_USE_TLS = True
 
 # CORS Settings
 # In development, you can allow your frontend's local server.

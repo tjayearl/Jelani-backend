@@ -14,7 +14,7 @@ class User(AbstractUser):
     policy_number = models.CharField(max_length=40, blank=True, null=True)
 
     def __str__(self):
-        return self.username  # or self.email if you want email login
+        return self.username
 
 class Claim(models.Model):
     STATUS_CHOICES = [
@@ -22,7 +22,7 @@ class Claim(models.Model):
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
     ]
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='claims')
     claim_type = models.CharField(max_length=100)
     description = models.TextField()
     document = models.FileField(upload_to='claims/', blank=True, null=True)
@@ -38,7 +38,7 @@ class Payment(models.Model):
         ('completed', 'Completed'),
         ('failed', 'Failed'),
     ]
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='payments')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     reference = models.CharField(max_length=100, unique=True)
