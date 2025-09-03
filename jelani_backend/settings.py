@@ -64,6 +64,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'jelani_backend.wsgi.application'
 
+# Use pymysql as the MySQL database driver
+import pymysql
+pymysql.install_as_MySQLdb()
+
 # Database (use MySQL here)
 DATABASES = {
     'default': {
