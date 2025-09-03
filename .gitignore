@@ -20,7 +20,8 @@ db.sqlite3
 media/
 staticfiles/
 
-# Environment variables
+# Ignore environment variables
+.env
 *.env
 
 # VSCode / PyCharm
@@ -30,3 +31,4 @@ staticfiles/
 # Node (if frontend is added later)
 node_modules/
 venv/
+Ines.Kibe/
