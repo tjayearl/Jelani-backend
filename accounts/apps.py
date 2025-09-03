@@ -5,5 +5,4 @@ class AccountsConfig(AppConfig):
     name = 'accounts'
     verbose_name = "User Accounts and Claims"
 
-    def ready(self):
-        import accounts.signals
+# ...existing code...

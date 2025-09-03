@@ -9,7 +9,11 @@ load_dotenv()
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-insecure-secret-key')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
+
+# Load hosts from environment variable, defaulting to local development hosts.
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+# Add 'testserver' to the list, which is required for running Django's APITestCase.
+ALLOWED_HOSTS.append('testserver')
 
 # Installed apps
 INSTALLED_APPS = [
@@ -22,8 +26,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'django_rest_passwordreset',
+    'django_extensions',
     'accounts',
+    'user_accounts',   # new app
 ]
 
 MIDDLEWARE = [
@@ -105,20 +112,13 @@ else:
     SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'] = timedelta(minutes=15)
 
 
-# Email Settings
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@jelani-insurance.com')
-
-if DEBUG:
-    # In development, print emails to the console.
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-else:
-    # In production, use a real SMTP server.
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = os.getenv('EMAIL_HOST')
-    EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
-    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-    EMAIL_USE_TLS = True
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "jelaniafrika@gmail.com"
+EMAIL_HOST_PASSWORD = "jzbk eppz ictq hcis"  # WARNING: Hardcoded password is a security risk!
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # CORS Settings
 # In development, you can allow your frontend's local server.
