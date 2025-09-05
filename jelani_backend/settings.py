@@ -67,23 +67,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'jelani_backend.wsgi.application'
 
-# Use pymysql as the MySQL database driver
-import pymysql
-pymysql.install_as_MySQLdb()
-
 # Database configuration.
-# Uses DATABASE_URL from the environment for production (e.g., Render with PostgreSQL).
-# For local development, it constructs a MySQL URL from other DB_* environment variables.
-
-DB_NAME = os.environ.get('DB_NAME')
-DB_USER = os.environ.get('DB_USER')
-DB_PASSWORD = os.environ.get('DB_PASSWORD')
-DB_HOST = os.environ.get('DB_HOST')
-DB_PORT = os.environ.get('DB_PORT', '3306')
-
-LOCAL_MYSQL_URL = f"mysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-
-DATABASES = {'default': dj_database_url.config(default=LOCAL_MYSQL_URL, conn_max_age=600, ssl_require=True if 'DATABASE_URL' in os.environ else False)}
+# Relies on the DATABASE_URL environment variable for all environments.
+# Example for local MySQL: DATABASE_URL="mysql://user:password@host:port/dbname"
+DATABASES = {
+    "default": dj_database_url.config(
+        default=os.getenv("DATABASE_URL"), conn_max_age=600
+    )
+}
 
 # Custom User Model
 AUTH_USER_MODEL = 'accounts.User'
