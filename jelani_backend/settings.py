@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from datetime import timedelta
+import dj_database_url
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -11,9 +12,11 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-insecure-secret-key')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 # Load hosts from environment variable, defaulting to local development hosts.
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
-# Add 'testserver' to the list, which is required for running Django's APITestCase.
-ALLOWED_HOSTS.append('testserver')
+ALLOWED_HOSTS = []
+if 'ALLOWED_HOSTS' in os.environ:
+    ALLOWED_HOSTS.extend(os.environ.get('ALLOWED_HOSTS').split(','))
+if DEBUG:
+    ALLOWED_HOSTS.extend(['localhost', '127.0.0.1', 'testserver'])
 
 # Installed apps
 INSTALLED_APPS = [
@@ -68,17 +71,19 @@ WSGI_APPLICATION = 'jelani_backend.wsgi.application'
 import pymysql
 pymysql.install_as_MySQLdb()
 
-# Database (use MySQL here)
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST'),
-        'PORT': os.environ.get('DB_PORT', '3306'),
-    }
-}
+# Database configuration.
+# Uses DATABASE_URL from the environment for production (e.g., Render with PostgreSQL).
+# For local development, it constructs a MySQL URL from other DB_* environment variables.
+
+DB_NAME = os.environ.get('DB_NAME')
+DB_USER = os.environ.get('DB_USER')
+DB_PASSWORD = os.environ.get('DB_PASSWORD')
+DB_HOST = os.environ.get('DB_HOST')
+DB_PORT = os.environ.get('DB_PORT', '3306')
+
+LOCAL_MYSQL_URL = f"mysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
+DATABASES = {'default': dj_database_url.config(default=LOCAL_MYSQL_URL, conn_max_age=600, ssl_require=True if 'DATABASE_URL' in os.environ else False)}
 
 # Custom User Model
 AUTH_USER_MODEL = 'accounts.User'
