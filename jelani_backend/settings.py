@@ -120,18 +120,12 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # CORS Settings
-# In development, you can allow your frontend's local server.
-# For production, replace these with your actual frontend domain(s).
+# A list of origins that are authorized to make cross-site HTTP requests.
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # React default
-    "http://localhost:5173",  # Vite default
-    "http://localhost:8080",  # Vue default
-    "http://localhost:4200",  # Angular default
-    "http://127.0.0.1:3000",
+    "https://jelani-afrika.vercel.app",  # Production frontend
+    "http://localhost:5500",             # Local testing
 ]
-
-# Allow credentials (cookies, authorization headers) to be included in CORS requests
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = True # Allow cookies to be sent with requests
 
 # Static files (CSS, JavaScript, Images) for Django Admin
 STATIC_URL = '/static/'
