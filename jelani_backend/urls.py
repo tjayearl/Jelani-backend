@@ -1,12 +1,17 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.http import JsonResponse
 from accounts.views import calculate_quote, dashboard
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
 
+def home(request):
+    return JsonResponse({"message": "Welcome to Jelani API 🚀"})
+
 urlpatterns = [
+    path('', home, name='home'), # Homepage route
     path('admin/', admin.site.urls),
     path('api/accounts/', include('accounts.urls')),
     # Standalone API endpoint for quote calculation

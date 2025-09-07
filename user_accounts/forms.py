@@ -6,8 +6,8 @@ User = get_user_model()
 class CustomUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
-        # The default form only includes username. We add email and phone_number.
-        fields = ("username", "email", "phone_number")
+        # The default form only includes username. We add email.
+        fields = ("username", "email")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
