@@ -18,7 +18,7 @@ urlpatterns = [
     path('api/accounts/', include('user_accounts.urls')),  # if you have a separate user_accounts app
 
     # Claims & payments (via routers in accounts app)
-    path('api/', include('accounts.urls_extra')),  # 👈 we’ll put claims & payments here
+    # path('api/', include('accounts.urls_extra')),  # remove this for now
 
     # Quotes
     path('api/quote/', include('quote.urls')),
