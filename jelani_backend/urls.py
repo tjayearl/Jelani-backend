@@ -21,7 +21,7 @@ urlpatterns = [
     # path('api/', include('accounts.urls_extra')),  # remove this for now
 
     # Quotes
-    path('api/quote/', include('quote.urls')),
+    # path('api/quote/', include('quote.urls')),
 
     # Dashboard
     path('api/dashboard/', include('dashboard.urls')),
