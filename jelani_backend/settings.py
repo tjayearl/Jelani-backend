@@ -66,12 +66,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'jelani_backend.wsgi.application'
 
-# Database configuration
-# Relies on the DATABASE_URL environment variable for all environments.
-# Example for local MySQL: DATABASE_URL="mysql://user:password@host:port/dbname"
-# Example for PostgreSQL: DATABASE_URL="postgresql://user:password@host:port/dbname"
+# Database configuration.
+# The default is set to SQLite for simple local development.
+# For production, you can override this by setting the DATABASE_URL environment variable.
 DATABASES = {
-    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
+    'default': dj_database_url.config(
+        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
+        conn_max_age=600
+    )
 }
 
 # Custom User Model
