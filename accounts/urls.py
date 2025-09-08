@@ -10,5 +10,4 @@ router.register(r'payments', views.PaymentViewSet, basename='payment')
 urlpatterns = [
     path('', include(router.urls)),
     path('login/', views.LoginView.as_view(), name='login'),
-    path('register/', register, name='register'),
 ]

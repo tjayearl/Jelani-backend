@@ -18,7 +18,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Auth & user accounts
-    path('api/accounts/', include('accounts.urls')),       # login, register, claims, payments
+    path('api/accounts/', include('accounts.urls')),       # login, claims, payments
+    path('api/user/', include('user_accounts.urls')),      # new registration endpoint
 
     # Claims & payments (via routers in accounts app)
     # path('api/', include('accounts.urls_extra')),  # remove this for now

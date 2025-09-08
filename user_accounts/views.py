@@ -1,23 +1,22 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from django.contrib.auth.models import User
+from rest_framework.permissions import AllowAny
+from .serializers import RegisterSerializer
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def register(request):
-    username = request.data.get("username")
-    email = request.data.get("email")
-    password = request.data.get("password")
-
-    if not username or not email or not password:
-        return Response({"error": "All fields are required"}, status=status.HTTP_400_BAD_REQUEST)
-
-    if User.objects.filter(email=email).exists():
-        return Response({"error": "Email already in use"}, status=status.HTTP_400_BAD_REQUEST)
-
-    if User.objects.filter(username=username).exists():
-        return Response({"error": "Username already in use"}, status=status.HTTP_400_BAD_REQUEST)
-
-    user = User.objects.create_user(username=username, email=email, password=password)
-    return Response({"message": "User registered successfully", "user": {"id": user.id, "username": user.username, "email": user.email}}, status=status.HTTP_201_CREATED)
+    try:
+        serializer = RegisterSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.save()
+            return Response({
+                "message": "User registered successfully",
+                "user": {"id": user.id, "username": user.username, "email": user.email}
+            }, status=status.HTTP_201_CREATED)
+        # This line is less likely to be reached due to raise_exception=True
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
