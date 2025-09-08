@@ -2,11 +2,9 @@ import os
 from pathlib import Path
 from datetime import timedelta
 import dj_database_url
-from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv()
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-insecure-secret-key')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'

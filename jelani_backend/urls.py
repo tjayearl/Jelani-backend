@@ -18,8 +18,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Auth & user accounts
-    path('api/accounts/', include('accounts.urls')),       # login, register, JWT
-    path('api/accounts/', include('user_accounts.urls')),  # if you have a separate user_accounts app
+    path('api/accounts/', include('accounts.urls')),       # login, register, claims, payments
 
     # Claims & payments (via routers in accounts app)
     # path('api/', include('accounts.urls_extra')),  # remove this for now

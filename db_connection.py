@@ -1,6 +1,5 @@
 import os
 import sys
-from dotenv import load_dotenv
 
 try:
     import MySQLdb
@@ -17,16 +16,6 @@ def get_db_connection():
     Returns:
         A MySQLdb connection object or None if the connection fails.
     """
-    # Load environment variables from .env file in the project root
-    project_root = os.path.dirname(os.path.abspath(__file__))
-    env_path = os.path.join(project_root, '.env')
-
-    if not os.path.exists(env_path):
-        print(f"❌ Error: .env file not found at {env_path}")
-        return None
-
-    load_dotenv(dotenv_path=env_path)
-
     db_config = {
         'host': os.getenv('DB_HOST'),
         'user': os.getenv('DB_USER'),
