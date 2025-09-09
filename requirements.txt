@@ -2,6 +2,7 @@ asgiref==3.9.1
 dj-database-url==3.0.1
 Django==5.2.5
 django-cors-headers==4.7.0
+django-csp==4.0
 django-extensions==4.1
 django-rest-passwordreset==1.5.0
 djangorestframework==3.16.1
