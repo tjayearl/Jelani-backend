@@ -50,8 +50,18 @@ MIDDLEWARE = [
 
 # Security Headers
 SECURE_CONTENT_TYPE_NOSNIFF = True
-CSP_DEFAULT_SRC = ("'self'",)
-CSP_SCRIPT_SRC = ("'self'",)
+
+# Django CSP 4.0+ config
+CONTENT_SECURITY_POLICY = {
+    "DIRECTIVES": {
+        "default-src": ("'self'",),
+        "script-src": ("'self'",),
+        # Add more if needed, e.g. for fonts, images, APIs
+        # "img-src": ("'self'", "data:"),
+        # "style-src": ("'self'", "https://fonts.googleapis.com"),
+        # "font-src": ("'self'", "https://fonts.gstatic.com"),
+    }
+}
 
 ROOT_URLCONF = 'jelani_backend.urls'
 
