@@ -46,22 +46,22 @@ class PaymentViewSet(viewsets.ModelViewSet): # should allow POST
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         # The frontend sends 'username' which can be a username or an email
-        login_identifier = attrs.get(self.username_field)
+        login_identifier = attrs.get(self.username_field) # In simple-jwt, this is 'username' by default
         password = attrs.get("password")
 
         user = None
 
-        # First, try to authenticate with the identifier as a username
-        user = authenticate(username=login_identifier, password=password)
+        # Try to authenticate with the identifier as a username first
+        user = authenticate(request=self.context.get('request'), username=login_identifier, password=password)
 
-        # If that fails, try to authenticate with it as an email
-        if not user:
+        # If username auth fails, try to find a user by email and authenticate them
+        if user is None:
             try:
-                user_obj = User.objects.get(email=login_identifier)
-                # Authenticate with the found user's actual username
-                user = authenticate(username=user_obj.username, password=password)
+                user_by_email = User.objects.get(email=login_identifier)
+                if user_by_email.check_password(password):
+                    user = user_by_email
             except User.DoesNotExist:
-                pass # User with this email does not exist
+                pass # No user with this email, authentication will fail below
 
         if not user or not user.is_active:
             raise AuthenticationFailed("No active account found with the given credentials")

@@ -6,6 +6,31 @@ from .models import Claim, Payment
 
 User = get_user_model()
 
+class AuthTests(APITestCase):
+    def setUp(self):
+        self.username = 'testuser'
+        self.email = 'test@example.com'
+        self.password = 'strong-password123'
+        self.user = User.objects.create_user(
+            username=self.username,
+            email=self.email,
+            password=self.password
+        )
+        self.token_url = reverse('token_obtain_pair')
+
+    def test_login_with_username(self):
+        """Verify that a user can log in using their username."""
+        response = self.client.post(self.token_url, {'username': self.username, 'password': self.password})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('access', response.data)
+
+    def test_login_with_email(self):
+        """Verify that a user can log in using their email address."""
+        response = self.client.post(self.token_url, {'username': self.email, 'password': self.password})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('access', response.data)
+
+
 class ClaimTests(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='testuser', email='test@example.com', password='testpass')
