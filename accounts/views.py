@@ -1,6 +1,6 @@
 # accounts/views.py
 from django.contrib.auth import authenticate, get_user_model
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, permissions
 from rest_framework.response import Response
 import uuid
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -9,15 +9,10 @@ from .models import Claim, Payment
 from .serializers import (
     ClaimSerializer,
     PaymentSerializer,
-    RegisterSerializer,
     CustomLoginSerializer
 )
 
 User = get_user_model()
-
-class RegisterView(generics.CreateAPIView):
-    serializer_class = RegisterSerializer
-    permission_classes = [AllowAny]
 
 class LoginView(generics.GenericAPIView):
     serializer_class = CustomLoginSerializer

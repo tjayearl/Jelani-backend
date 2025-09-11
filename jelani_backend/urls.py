@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.http import JsonResponse
-
+from django.conf import settings
+from django.conf.urls.static import static
 from rest_framework_simplejwt.views import TokenRefreshView
-from accounts.views import CustomTokenObtainPairView
 
 # Simple homepage
 def home(request):
@@ -16,20 +16,18 @@ urlpatterns = [
     # Admin panel
     path('admin/', admin.site.urls),
 
-    # Auth & user accounts
-    path('api/accounts/', include('accounts.urls')),       # login, claims, payments
-    path('api/user/', include('user_accounts.urls')),      # new registration endpoint
-
-    # Claims & payments (via routers in accounts app)
-    # path('api/', include('accounts.urls_extra')),  # remove this for now
-
-    # Quotes
-    # path('api/quote/', include('quote.urls')),
+    # Auth
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     # Dashboard
     path('api/dashboard/', include('dashboard.urls')),
 
-    # JWT endpoints (if not already in accounts.urls)
-    path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    # User Accounts specific endpoints
+    path('api/users/', include('user_accounts.urls')),
+
+    # Other app endpoints (claims, payments)
+    path('api/', include('accounts.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

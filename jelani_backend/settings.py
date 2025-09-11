@@ -10,11 +10,14 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-insecure-secret-key')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 # Load hosts from environment variable, defaulting to local development hosts.
-ALLOWED_HOSTS = []
-if 'ALLOWED_HOSTS' in os.environ:
-    ALLOWED_HOSTS.extend(os.environ.get('ALLOWED_HOSTS').split(','))
-if DEBUG:
-    ALLOWED_HOSTS.extend(['localhost', '127.0.0.1', 'testserver'])
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+
+# Always allow testserver for running tests
+ALLOWED_HOSTS.append('testserver')
+
+# In development, add localhost and 127.0.0.1 for convenience
+if DEBUG and not os.environ.get('ALLOWED_HOSTS'):
+    ALLOWED_HOSTS.extend(['localhost', '127.0.0.1'])
 
 # Installed apps
 INSTALLED_APPS = [
@@ -26,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'csp',
     'rest_framework',
+    'rest_framework.authtoken',  # ✅ Required for token auth
     'corsheaders',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
@@ -109,9 +113,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # REST Framework
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
 }
 
 # JWT Settings
