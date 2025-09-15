@@ -23,7 +23,7 @@ urlpatterns = [
     path('api/dashboard/', include('dashboard.urls')),
 
     # User Accounts specific endpoints
-    path('api/users/', include('user_accounts.urls')),
+    path('api/user/', include('user_accounts.urls')),
 
     # Other app endpoints (claims, payments)
     path('api/', include('accounts.urls')),
