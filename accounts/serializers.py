@@ -1,14 +1,21 @@
 from rest_framework import serializers
-from .models import Claim, Payment
+from django.contrib.auth import authenticate
+from django.utils.translation import gettext_lazy as _
 
-class ClaimSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Claim
-        fields = '__all__'
-        read_only_fields = ('user', 'status', 'created_at')
+class CustomLoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
 
-class PaymentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Payment
-        fields = '__all__'
-        read_only_fields = ('user', 'status', 'created_at', 'reference')
+    def validate(self, data):
+        username = data.get("username")
+        password = data.get("password")
+
+        if username and password:
+            user = authenticate(username=username, password=password)
+            if not user:
+                raise serializers.ValidationError(_("Invalid username or password."))
+        else:
+            raise serializers.ValidationError(_("Must include 'username' and 'password'."))
+
+        data["user"] = user
+        return data
