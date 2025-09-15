@@ -1,12 +1,13 @@
 # accounts/views.py
 from django.contrib.auth import authenticate, get_user_model
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 import uuid
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
+from user_accounts.serializers import RegisterSerializer
 from .models import Claim, Payment
 from .serializers import (
     ClaimSerializer,
@@ -15,6 +16,11 @@ from .serializers import (
 )
 
 User = get_user_model()
+
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = RegisterSerializer
+    permission_classes = [AllowAny]
 
 class LoginView(APIView):
     permission_classes = [AllowAny]

@@ -16,17 +16,17 @@ class AuthTests(APITestCase):
             email=self.email,
             password=self.password
         )
-        self.token_url = reverse('token_obtain_pair')
+        self.login_url = reverse('custom_login')
 
     def test_login_with_username(self):
         """Verify that a user can log in using their username."""
-        response = self.client.post(self.token_url, {'username': self.username, 'password': self.password})
+        response = self.client.post(self.login_url, {'login': self.username, 'password': self.password})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('access', response.data)
 
     def test_login_with_email(self):
         """Verify that a user can log in using their email address."""
-        response = self.client.post(self.token_url, {'username': self.email, 'password': self.password})
+        response = self.client.post(self.login_url, {'login': self.email, 'password': self.password})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('access', response.data)
 
@@ -34,9 +34,9 @@ class AuthTests(APITestCase):
 class ClaimTests(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='testuser', email='test@example.com', password='testpass')
-        # Obtain JWT token
-        token_url = reverse('token_obtain_pair')
-        response = self.client.post(token_url, {'username': 'testuser', 'password': 'testpass'})
+        # Obtain JWT token via custom login
+        login_url = reverse('custom_login')
+        response = self.client.post(login_url, {'login': 'testuser', 'password': 'testpass'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         token = response.data['access']
         # Set credentials for subsequent requests
@@ -54,9 +54,9 @@ class ClaimTests(APITestCase):
 class PaymentTests(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='payuser', email='pay@example.com', password='testpass')
-        # Obtain JWT token
-        token_url = reverse('token_obtain_pair')
-        response = self.client.post(token_url, {'username': 'payuser', 'password': 'testpass'})
+        # Obtain JWT token via custom login
+        login_url = reverse('custom_login')
+        response = self.client.post(login_url, {'login': 'payuser', 'password': 'testpass'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         token = response.data['access']
         # Set credentials for subsequent requests
