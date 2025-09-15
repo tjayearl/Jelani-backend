@@ -1,8 +1,10 @@
 # accounts/views.py
 from django.contrib.auth import authenticate, get_user_model
-from rest_framework import viewsets, generics, permissions
+from rest_framework import viewsets, status
 from rest_framework.response import Response
+from rest_framework.views import APIView
 import uuid
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from .models import Claim, Payment
@@ -14,14 +16,25 @@ from .serializers import (
 
 User = get_user_model()
 
-class LoginView(generics.GenericAPIView):
-    serializer_class = CustomLoginSerializer
+class LoginView(APIView):
     permission_classes = [AllowAny]
 
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+    def post(self, request):
+        serializer = CustomLoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        return Response(serializer.validated_data)
+        user = serializer.validated_data['user']
+
+        refresh = RefreshToken.for_user(user)
+
+        return Response({
+            "message": "Login successful",
+            "access": str(refresh.access_token),
+            "refresh": str(refresh),
+            "user": {
+                "username": user.username,
+                "email": user.email,
+            }
+        }, status=status.HTTP_200_OK)
 
 # This is a standard Django view, not a DRF one. It might be deprecated.
 # Consider if you still need it.
