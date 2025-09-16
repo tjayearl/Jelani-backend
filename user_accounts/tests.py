@@ -5,17 +5,17 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-class UserAccountTests(APITestCase):
+class CustomAuthTests(APITestCase):
     """
-    Test suite for user registration and login.
+    Test suite for user registration and login endpoints in the 'accounts' app.
     """
 
     def setUp(self):
         """
         Set up test data for the tests.
         """
-        self.register_url = reverse('user-register')
-        self.login_url = reverse('user-login')
+        self.register_url = reverse('custom_register')
+        self.login_url = reverse('custom_login')
 
         self.user_data = {
             "full_name": "Test User",
