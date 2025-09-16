@@ -6,18 +6,23 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-insecure-secret-key')
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+SECRET_KEY = os.environ.get("SECRET_KEY", "unsafe-secret-key")
+DEBUG = os.environ.get("DEBUG", "True") == "True"
 
-# Load hosts from environment variable, defaulting to local development hosts.
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+# Load hosts from environment variable, defaulting to local development hosts
+ALLOWED_HOSTS = os.environ.get(
+    "DJANGO_ALLOWED_HOSTS",
+    "127.0.0.1,localhost"
+).split(",")
 
 # Always allow testserver for running tests
-ALLOWED_HOSTS.append('testserver')
+if 'testserver' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('testserver')
 
-# In development, add localhost and 127.0.0.1 for convenience
-if DEBUG and not os.environ.get('ALLOWED_HOSTS'):
-    ALLOWED_HOSTS.extend(['localhost', '127.0.0.1'])
+CSRF_TRUSTED_ORIGINS = os.environ.get(
+    "DJANGO_CSRF_TRUSTED_ORIGINS",
+    "http://127.0.0.1:8000"
+).split(",")
 
 # Installed apps
 INSTALLED_APPS = [
@@ -41,9 +46,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'csp.middleware.CSPMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -141,10 +146,11 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # CORS Settings
-# A list of origins that are authorized to make cross-site HTTP requests.
+# A list of origins that are authorized to make cross-site HTTP requests
 CORS_ALLOWED_ORIGINS = [
-    "https://jelani-afrika.vercel.app",  # Production frontend
-    "http://localhost:5500",             # Local testing
+    origin for origin in os.environ.get(
+        "DJANGO_CORS_ALLOWED_ORIGINS", ""
+    ).split(",") if origin
 ]
 CORS_ALLOW_CREDENTIALS = True # Allow cookies to be sent with requests
 
