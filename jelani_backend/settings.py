@@ -12,7 +12,7 @@ DEBUG = os.environ.get("DEBUG", "True") == "True"
 # Load hosts from environment variable, defaulting to local development hosts
 ALLOWED_HOSTS = os.environ.get(
     "DJANGO_ALLOWED_HOSTS",
-    "127.0.0.1,localhost"
+    "127.0.0.1,localhost,jelani-backend.onrender.com"
 ).split(",")
 
 # Always allow testserver for running tests
