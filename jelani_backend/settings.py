@@ -42,10 +42,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'accounts',
     'user_accounts',   # new app
-    'dashboard',It looks like you're encountering two different behaviors between your local development server and your deployed backend. Let's troubleshoot this:
-    
-    ### Local Server Working Fine
-    The `{"message": "Welcome to Jelani API 🚀"}` response indicates your local Django/FastAPI/Flask (whichever framework you're using) is working correctly.
+    'dashboard',
 ]
 
 MIDDLEWARE = [

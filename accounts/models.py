@@ -7,7 +7,7 @@ class Claim(models.Model):
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
     ]
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     claim_type = models.CharField(max_length=100)
     description = models.TextField()
     document = models.FileField(upload_to='claims/', blank=True, null=True)
