@@ -21,7 +21,7 @@ if 'testserver' not in ALLOWED_HOSTS:
 
 CSRF_TRUSTED_ORIGINS = os.environ.get(
     "DJANGO_CSRF_TRUSTED_ORIGINS",
-    "http://127.0.0.1:8000"
+    "http://127.0.0.1:8000,https://jelani-backend.onrender.com"
 ).split(",")
 
 # Installed apps
@@ -42,7 +42,10 @@ INSTALLED_APPS = [
     'django_extensions',
     'accounts',
     'user_accounts',   # new app
-    'dashboard',
+    'dashboard',It looks like you're encountering two different behaviors between your local development server and your deployed backend. Let's troubleshoot this:
+    
+    ### Local Server Working Fine
+    The `{"message": "Welcome to Jelani API 🚀"}` response indicates your local Django/FastAPI/Flask (whichever framework you're using) is working correctly.
 ]
 
 MIDDLEWARE = [
